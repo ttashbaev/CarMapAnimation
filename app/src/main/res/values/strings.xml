@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">CarMapAnimation</string>
+
     <string name="google_api">AIzaSyBtyn33bvTQwDGgPb-pjGDsvFHAs4SO1lA</string>
 </resources>
