@@ -1,5 +1,4 @@
-
-        package com.example.timur.carmapanimation.ui;
+package com.example.timur.carmapanimation.ui;
 
         import android.animation.ValueAnimator;
         import android.annotation.SuppressLint;
@@ -54,7 +53,7 @@
         import java.util.ArrayList;
         import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback,View.OnClickListener {
     private LinearLayout mLlBottomSheet;
     private BottomSheetBehavior mBottomSheetBehavior;
     private Button btnStart, btnStop;
