@@ -137,8 +137,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void getRouteList() {
         GoogleDirection.withServerKey(getString(R.string.google_api))
                 .from(mStartPosition)
+
                 .to(mEndPosition)
                 .transportMode(TransportMode.DRIVING)
+                .optimizeWaypoints(true)
                 .execute(new DirectionCallback() {
                     @Override
                     public void onDirectionSuccess(Direction direction, String rawBody) {
@@ -194,7 +196,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void drawCarMarker() {
 
 
-
     }
 
     private void animateCar(ArrayList<LatLng> routeList) {
@@ -232,8 +233,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 }
 
                 if (index < myPolyline.getPoints().size() - 1) {
-                    mStartPosition = myPolyline.getPoints().get(index);
-                    mEndPosition = myPolyline.getPoints().get(next);
+                    mStartPosition = mRouteList.get(index);
+                    mEndPosition = mRouteList.get(next);
                 }
                 final ValueAnimator valueAnimator = ValueAnimator.ofFloat(0, 1);
                 valueAnimator.setDuration(3000);
@@ -246,6 +247,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                                 * mStartPosition.longitude;
                         lat = fraction * mEndPosition.latitude + (1 - fraction)
                                 * mStartPosition.latitude;
+
 
                         LatLng newPos = new LatLng(new BigDecimal(lat).
                                 setScale(6, RoundingMode.CEILING).doubleValue()
@@ -267,11 +269,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         Location endLocation = new Location(LocationManager.GPS_PROVIDER);
                         endLocation.setLatitude(mEndPosition.latitude);
                         endLocation.setLongitude(mEndPosition.longitude);
-                        Log.d("location", "onAnimationUpdate: " + startLocation);
-                        float hearing = endLocation.bearingTo(startLocation);
+//                        Log.d("location", "onAnimationUpdate: " + startLocation.getLatitude()
+//                         + " " + startLocation.getLongitude());
+                        float hearing = startLocation.bearingTo(endLocation);
                         hearing = Math.round(hearing - 230);
 
-                        if (startLocation != endLocation) {
+                        if (hearing != prevRotate) {
+
                             mCarMarker.setRotation(Math.round(hearing));
                             Log.d("runnable", "onAnimationUpdate: " + hearing);
                         }
@@ -294,6 +298,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     }
 
+    private float normalizeDegree(float value) {
+        if (value >= 0.0f && value <= 180.0f) {
+            return value;
+        } else {
+            return 180 + (180 + value);
+        }
+    }
+
     private float getBearing(LatLng startPosition, LatLng newPos) {
 
         double PI = 3.14159;
@@ -312,6 +324,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         brng = Math.toDegrees(brng);
         brng = (brng + 360) % 360;
+
 
         return (float) brng;
 
