@@ -5,6 +5,8 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.Interpolator;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Handler;
@@ -49,6 +51,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.maps.android.SphericalUtil;
 
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
@@ -93,8 +96,23 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btnStart:
-                Toast.makeText(this, "sdasdasdsadasd", Toast.LENGTH_SHORT).show();
-                //
+                Toast.makeText(this,"sdasdasdsadasd",Toast.LENGTH_SHORT).show();
+                String location = mEtGetLocat.getText().toString();
+                List<Address> addressList = null;
+
+                if (location != null || !location.equals("")) {
+                    Geocoder geocoder = new Geocoder(this);
+                    try {
+                        addressList = geocoder.getFromLocationName(location, 1);
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Address address = addressList.get(0);
+                    LatLng latLng = new LatLng(address.getLatitude(), address.getLongitude());
+                    mGoogleMap.addMarker(new MarkerOptions().position(latLng).title("Marker"));
+                    mGoogleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+                }
                 break;
             case R.id.btnStop:
                 Toast.makeText(this, "sdasdasdsadasd232232323", Toast.LENGTH_SHORT).show();
@@ -132,6 +150,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             mGoogleMap.setMyLocationEnabled(true);
             getRouteList();
         }
+    }
+
+    private void startLocationService(){
+        //startService(new Intent(this, LocationUpdateService.class));
+        getRouteList();
     }
 
     private void getRouteList() {
@@ -294,6 +317,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
             }
         }, 3000);
+
+
+
+
 
 
     }
